@@ -8,7 +8,6 @@ import {
 } from "type-graphql";
 import { Product, ProductModel } from "@entities/products";
 import { ProductInput } from "./types/product-input";
-
 import { Categories, CategoriesModel } from "@entities/categories";
 
 @Resolver((_of) => Product)

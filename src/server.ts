@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 import { ApolloServer } from "apollo-server-express";
 import http from "http";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
@@ -16,8 +18,11 @@ const main = async () => {
     validate: false,
   });
 
-  // create mongoose connection
-  const mongoose = await connect("mongodb://localhost:27017/test");
+  const mongoose = await connect("mongodb://localhost:27017", {
+    user: process.env.MONGODB_USER,
+    pass: process.env.MONGODB_PASSWORD,
+  });
+
   await mongoose.connection;
 
   const app = Express();

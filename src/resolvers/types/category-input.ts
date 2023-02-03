@@ -1,4 +1,4 @@
-import { InputType, Field, ObjectType, ID } from "type-graphql";
+import { InputType, Field } from "type-graphql";
 import { Length } from "class-validator";
 import { Categories } from "@entities/categories";
 

@@ -15,6 +15,17 @@ input CategoriesInput {
   name: String!
 }
 
+type CategoryNotification {
+  date: DateTime!
+  id: ID!
+  message: String
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 type Mutation {
   createCategory(data: CategoriesInput!): Categories!
   createProduct(data: ProductInput!): Product!
@@ -48,4 +59,8 @@ type Query {
   returnAllProduct: [Product!]!
   returnSingleCategory(id: String!): Categories!
   returnSingleProduct(id: String!): Product!
+}
+
+type Subscription {
+  newCategory: CategoryNotification!
 }

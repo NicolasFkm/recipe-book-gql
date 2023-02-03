@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Query, Subscription, Root, Args, PubSubEngine, PubSub } from "type-graphql";
+import { Resolver, Mutation, Arg, Query, Subscription, Root, PubSubEngine, PubSub } from "type-graphql";
 import { Categories, CategoriesModel } from "@entities/categories";
 import { CategoriesInput } from "./types/category-input";
 import { CategoryNotification, CategoryNotificationPayload } from "./types/category-notification";
@@ -41,8 +41,7 @@ export class CategoriesResolver {
   @Subscription({
     topics: "NEW_CATEGORY",
   })
-  async newCategory(@Root() notificationPayload: CategoryNotificationPayload,
-    @Args() args: CategoryNotification): Promise<CategoryNotification> {
+  newCategory(@Root() notificationPayload: CategoryNotificationPayload): CategoryNotification {
     return {
       ...notificationPayload,
       date: new Date(),

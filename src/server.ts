@@ -1,48 +1,70 @@
 import "reflect-metadata";
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config()
-import { ApolloServer } from "apollo-server-express";
-import http from "http";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import Express from "express";
-import { buildSchema } from "type-graphql";
-import { connect } from "mongoose";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-import { ProductResolver } from "@resolvers/products";
-import { CategoriesResolver } from "@resolvers/categories";
+import express from "express";
+import { graphqlHTTP } from "express-graphql";
+import { buildSchema } from "graphql";
 
-const main = async () => {
-  const schema = await buildSchema({
-    resolvers: [CategoriesResolver, ProductResolver],
-    emitSchemaFile: true,
-    validate: false,
-  });
+//Images data
 
-  const mongoose = await connect("mongodb://localhost:27017", {
-    user: process.env.MONGODB_USER,
-    pass: process.env.MONGODB_PASSWORD,
-  });
+const recipesData = [
+  {
+    _id: 1,
+    title: "Stacked Brwonies",
+    owner: "Ella Olson",
+    category: "Desserts",
+    url: "https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg",
+  }
+];
 
-  await mongoose.connection;
+// GraphQL Schema
+const schema = buildSchema(`
+      type Query {
+        recipe(id: Int!): Recipe
+      }
+      type Recipe {
+        _id: string;
+        name: string;
+        timeToPrep: number;
+        servings: number;
+        tags: string[];
+    
+        category: Category
+        ingredients: Ingredient[];
+        directions: Step[];
+      }
+`);
 
-  const app = Express();
-  const httpServer = http.createServer(app);
-  const server = new ApolloServer({
-    schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  });
+// Get single Image using id
 
-  await server.start();
+function getRecipe(id: number) {
+  for (const recipe of recipesData) {
+    if (recipe._id === id) {
+      return recipe;
+    }
+  }
 
-  server.applyMiddleware({ app, cors: false });
+  return null;
+}
 
-  app.listen({ port: 3333 }, () =>
-    console.log(
-      `🚀 Server ready and listening at ==> http://localhost:3333${server.graphqlPath}`
-    )
-  );
+// Resolver
+const root = {
+  recipe: getRecipe,
 };
 
-main().catch((error) => {
-  console.log(error, "error");
+//Create an express server and GraphQL endpoint
+const app = express();
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+  })
+);
+
+//Listening to our server
+app.listen(5000, () => {
+  console.log("GraphQL server with Express running on localhost:5000/graphql");
 });

@@ -1,4 +1,4 @@
-export class Category {
+export class Item {
   _id: string;
   name: string;
 }

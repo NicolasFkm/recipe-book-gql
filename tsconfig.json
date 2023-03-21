@@ -34,7 +34,19 @@
         "src/types/*"
       ],
       "@entities/*": [
-        "src/entities/*"
+        "src/domain/entities/*"
+      ],
+      "@domain/*": [
+        "src/domain/*"
+      ],
+      "@enums/*": [
+        "src/domain/enums/*"
+      ],
+      "@infra/*": [
+        "src/infra/*"
+      ],
+      "@repositories/*": [
+        "src/domain/repositories/*"
       ],
       "@resolvers/*": [
         "src/resolvers/*"

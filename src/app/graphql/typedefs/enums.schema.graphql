@@ -1,0 +1,11 @@
+enum Measurement {
+  TSP
+  TBSP
+  CUP
+  ML
+  L
+  KG
+  LB
+  OZ
+  UNIT
+}

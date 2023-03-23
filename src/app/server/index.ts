@@ -8,22 +8,14 @@ import { graphqlHTTP } from 'express-graphql';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { GraphQLSchema } from 'graphql';
+import ws from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { execute, subscribe } from 'graphql';
+import categoriesMutation from '../graphql/resolvers/categories/mutations';
 import recipeQueries from '../graphql/resolvers/recipes/queries';
-
-// GraphQL Query Root Schema
-// const QueryRoot = new GraphQLObjectType({
-//     name: 'Query',
-//     fields: () => ({
-//         hello: {
-//             type: GraphQLString,
-//             resolve: () => "Hello world!"
-//         },
-//         recipe: {
-//             type: GraphQLString,
-//             resolve: () => "Hello world!"
-//         }
-//     })
-// })
+import categoriesSubscriptions from '../graphql/resolvers/categories/subscriptions';
+import cors from 'cors';
+import categoryQueries from '../graphql/resolvers/categories/queries';
 
 const schema: GraphQLSchema = loadSchemaSync(
   path.resolve(__dirname, '../graphql/**/*.schema.graphql'),
@@ -31,10 +23,14 @@ const schema: GraphQLSchema = loadSchemaSync(
 );
 
 const rootValue = {
-  ...recipeQueries,
+  // ...recipeQueries,
+  ...categoryQueries,
+  ...categoriesMutation,
+  ...categoriesSubscriptions,
 };
 
 const app = express();
+app.use(cors());
 app.use(
   '/graphql',
   graphqlHTTP({
@@ -44,6 +40,33 @@ app.use(
   })
 );
 
-app.listen(5000, () => {
+const server = app.listen(5000, () => {
   console.log('GraphQL server with Express running on localhost:5000/graphql');
+  const wsServer = new ws.Server({
+    server,
+    path: '/subscriptions',
+  });
+  useServer(
+    {
+      schema,
+      subscribe,
+      execute,
+      onConnect: (_) => {
+        console.log('Connect');
+      },
+      onSubscribe: (_, __) => {
+        console.log('Subscribe');
+      },
+      onNext: (_, __, ___, ____) => {
+        console.debug('Next');
+      },
+      onError: (_, __, ___) => {
+        console.error('Error', __, ___);
+      },
+      onComplete: (_, __) => {
+        console.log('Complete');
+      },
+    },
+    wsServer
+  );
 });

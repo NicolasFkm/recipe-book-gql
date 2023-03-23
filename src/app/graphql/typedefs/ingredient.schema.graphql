@@ -1,5 +1,5 @@
 type Ingredient {
-  id: ID!
+  _id: ID!
   item: Item!
   quantity: Float!
   measurement: Measurement

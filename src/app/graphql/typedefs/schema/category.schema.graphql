@@ -1,0 +1,21 @@
+type Category {
+  _id: ID!
+  name: String!
+  description: String
+}
+
+input CategoryCreationInput {
+  name: String!
+}
+
+type Mutation {
+  createCategory(name: String): Category
+}
+
+type Subscription {
+  categoryCreated: Category
+}
+
+type Query {
+  categories: [Category]!
+}

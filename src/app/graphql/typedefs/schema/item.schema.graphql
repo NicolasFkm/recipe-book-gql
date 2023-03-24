@@ -1,4 +1,4 @@
 type Item {
-  id: ID!
+  _id: ID!
   name: String!
 }

@@ -1,7 +1,7 @@
 scalar DateTime
 
 type Recipe {
-  id: ID!
+  _id: ID!
   name: String!
   timeToPrep: Int!
   servings: Int!

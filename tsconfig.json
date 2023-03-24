@@ -39,6 +39,12 @@
       "@domain/*": [
         "src/domain/*"
       ],
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@graphql/*": [
+        "src/app/graphql/*"
+      ],
       "@enums/*": [
         "src/domain/enums/*"
       ],

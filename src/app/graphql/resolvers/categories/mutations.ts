@@ -4,13 +4,19 @@ import { v4 } from 'uuid';
 
 const NEW_SUBSCRIPTION_EVENT = 'new_subscription_event';
 
-const categoriesMutation = {
-  createCategory: async (data: { name: string }) => {
-    const category = { _id: v4(), name: data.name };
-    database.categories.push(category);
-    pubSub.publish(NEW_SUBSCRIPTION_EVENT, { newItem: category });
+type CategoryInput = {
+  name: string;
+};
 
-    return category;
+const categoriesMutation = {
+  createCategory: (_: any, category: CategoryInput, ctx: any) => {
+    console.log('Create Category', category.name);
+    const newCategory = { _id: v4(), name: category.name };
+    database.categories.push(newCategory);
+
+    ctx.pubSub.publish(NEW_SUBSCRIPTION_EVENT, newCategory);
+
+    return newCategory;
   },
 };
 

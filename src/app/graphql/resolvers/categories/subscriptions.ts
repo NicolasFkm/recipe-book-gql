@@ -4,7 +4,9 @@ const NEW_SUBSCRIPTION_EVENT = 'new_subscription_event';
 
 const categoriesSubscriptions = {
   categoryCreated: {
-    subscribe: () => pubSub.asyncIterator([NEW_SUBSCRIPTION_EVENT]),
+    subscribe: (_: any, __: any, ctx: any) =>
+      ctx.pubSub.asyncIterator(NEW_SUBSCRIPTION_EVENT),
+    resolve: (payload: any) => payload,
   },
 };
 

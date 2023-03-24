@@ -1,13 +1,11 @@
-schema {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
-}
-
 type Category {
   _id: ID!
   name: String!
   description: String
+}
+
+input CategoryCreationInput {
+  name: String!
 }
 
 type Mutation {
@@ -15,7 +13,7 @@ type Mutation {
 }
 
 type Subscription {
-  categoryCreated: Category!
+  categoryCreated: Category
 }
 
 type Query {

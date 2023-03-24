@@ -2,32 +2,18 @@ import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import path from 'path';
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
-import { loadSchemaSync } from '@graphql-tools/load';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { GraphQLSchema } from 'graphql';
 import ws from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { execute, subscribe } from 'graphql';
-import categoriesMutation from '../graphql/resolvers/categories/mutations';
-import recipeQueries from '../graphql/resolvers/recipes/queries';
-import categoriesSubscriptions from '../graphql/resolvers/categories/subscriptions';
 import cors from 'cors';
-import categoryQueries from '../graphql/resolvers/categories/queries';
+import typeDefs from '@app/graphql/typedefs';
+import resolvers from '@app/graphql/resolvers';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { pubSub } from '@infra/pubsub';
 
-const schema: GraphQLSchema = loadSchemaSync(
-  path.resolve(__dirname, '../graphql/**/*.schema.graphql'),
-  { loaders: [new GraphQLFileLoader()] }
-);
-
-const rootValue = {
-  // ...recipeQueries,
-  ...categoryQueries,
-  ...categoriesMutation,
-  ...categoriesSubscriptions,
-};
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const app = express();
 app.use(cors());
@@ -35,8 +21,11 @@ app.use(
   '/graphql',
   graphqlHTTP({
     schema,
-    rootValue,
+    rootValue: resolvers,
     graphiql: true,
+    context: {
+      pubSub: pubSub,
+    },
   })
 );
 
@@ -65,6 +54,9 @@ const server = app.listen(5000, () => {
       },
       onComplete: (_, __) => {
         console.log('Complete');
+      },
+      context: {
+        pubSub: pubSub,
       },
     },
     wsServer

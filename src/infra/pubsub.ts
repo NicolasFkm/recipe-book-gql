@@ -3,4 +3,5 @@ import { PubSub } from 'graphql-subscriptions';
 
 export type PubSubChannels = {};
 
-export const pubSub = new PubSub();
+const pubsub = new PubSub();
+export const pubSub = pubsub;

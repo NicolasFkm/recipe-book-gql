@@ -37,8 +37,8 @@ type Recipe {
 # }
 
 # Queries
-# type Query {
-#   recipes: [Recipe]!
-#   recipe: Recipe!
-#   recipesWithIngredient(ingredientName: String): [Recipe]
-# }
+type Query {
+  recipes: [Recipe]!
+  recipe: Recipe!
+  recipesWithIngredient(ingredientName: String): [Recipe]
+}
